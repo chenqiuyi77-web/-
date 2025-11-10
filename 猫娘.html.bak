@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杂鱼猜数字小游戏 💗</title>
+<style>
+    body {
+        font-family: "Microsoft YaHei", sans-serif;
+        background: linear-gradient(135deg, #a1e4ff, #ffccf9);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 5vw;
+        color: #333;
+        box-sizing: border-box;
+    }
+    h1 {
+        color: #2f80ed;
+        text-shadow: 1px 1px 3px #fff;
+        font-size: 6vw;
+        margin-bottom: 4vw;
+        text-align: center;
+    }
+    #log {
+        white-space: pre-line;
+        text-align: left;
+        margin: 2vw 0;
+        padding: 4vw;
+        width: 90%;
+        max-width: 500px;
+        background: rgba(255,255,255,0.85);
+        border: 2px solid #2f80ed;
+        border-radius: 12px;
+        min-height: 30vh;
+        overflow-y: auto;
+        font-size: 3.5vw;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    }
+    input, button {
+        margin: 1vw;
+        padding: 2vw;
+        font-size: 4vw;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    input {
+        width: 40%;
+        min-width: 100px;
+        text-align: center;
+    }
+    button {
+        background-color: #2f80ed;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    button:hover {
+        background-color: #1b5ac2;
+        transform: scale(1.05);
+    }
+    .cat-talk {
+        background: #fff0fa;
+        border: 1px solid #ff99cc;
+        border-radius: 10px;
+        padding: 2vw;
+        margin-top: 2vw;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        font-size: 3.5vw;
+        word-break: break-word;
+    }
+    @media (min-width: 600px) {
+        h1 { font-size: 2em; }
+        #log, .cat-talk { font-size: 1em; }
+        input, button { font-size: 1em; padding: 8px; }
+    }
+</style>
+</head>
+<body>
+
+<h1>猜数字小游戏</h1>
+<div id="log"></div>
+
+<div style="display:flex; justify-content:center; flex-wrap:wrap;">
+    <input type="number" id="guessInput" placeholder="输入你的猜测">
+    <button onclick="guessNumber()">猜！</button>
+</div>
+
+<script>
+let ans, gue, roll, game = 0;
+let playing = true;
+
+function logMessage(msg) {
+    const logDiv = document.getElementById("log");
+    const bubble = document.createElement('div');
+    bubble.className = 'cat-talk';
+    bubble.textContent = msg;
+    logDiv.appendChild(bubble);
+    logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+function startGame() {
+    ans = Math.floor(Math.random() * 100) + 1;
+    gue = 0;
+    roll = 0;
+    playing = true;
+    logMessage("猜吧杂鱼，1到100的整数，一共有7次机会哦");
+}
+startGame();
+
+function guessNumber() {
+    if (!playing) return;
+    const val = document.getElementById("guessInput").value;
+    gue = parseInt(val);
+    if (isNaN(gue)) return;
+
+    // 🎯 彩蛋检测
+    if (gue === 114514) {
+        logMessage("咦惹～杂鱼大哥哥你好臭啊～");
+        document.getElementById("guessInput").value = "";
+        return; // 不扣机会
+    }
+
+    if (gue < 1 || gue > 100) {
+        roll++;
+        logMessage(`连规则都读不明白的大哥哥，真是杂鱼呢\n已经猜了${roll}次了哦`);
+    }
+    if (gue < ans && gue >= 1) {
+        roll++;
+        logMessage(`猜小了，杂鱼\n已经猜了${roll}次了哦`);
+    }
+    if (gue > ans && gue <= 100) {
+        roll++;
+        logMessage(`猜大了，杂鱼\n已经猜了${roll}次了哦`);
+        roll++;
+        logMessage(`哦哦哦哦哦哦哦没想到居然被你猜中了，而且只用了${roll}次，答案就是${ans}哦`);
+        roll = 7;
+    }
+
+    if (roll >= 7) {
+        game++;
+        if (gue !== ans) {
+            logMessage("输掉了呢，杂鱼大哥哥");
+        }
+        playing = false;
+        setTimeout(() => {
+            let con = prompt(`还想再来玩的话就输入1，承认自己是杂鱼然后就此退出的话就输入0哦\n杂鱼大哥哥已经玩了${game}局了呢`);
+            if (con == "1") {
+                logMessage("噗哈哈，那就继续让我见识一下杂鱼大哥哥的猜数字能力吧");
+                startGame();
+            } else if (con == "0") {
+                logMessage("那就再见咯，杂鱼");
+            } else {
+                logMessage("听不明白话嘛杂鱼，不跟你玩了（离开）");
+            }
+        }, 200);
+    }
+}
+</script>
+
+</body>
+</html>
